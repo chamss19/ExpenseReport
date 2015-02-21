@@ -20,35 +20,38 @@ import java.text.SimpleDateFormat;
 
 //System.getProperty("user.name")
 public class reportForm extends JFrame {
-	// SQLS DOE
+	/*
+	 * SQLS DOE
+	 */
 	sqlHandler sqls = new sqlHandler();
 
-	// LAYOUT SOME STUFF
+	/*
+	 * LAYOUT SOME STUFF
+	 */
 	FlowLayout myLayOut = new FlowLayout(FlowLayout.LEFT);
 
-	// FORM EVENTS CLASS
+	/*
+	 * FORM EVENTS CLASS
+	 */
 	FormEvents frmEvents = new FormEvents();
 
-	// Border
+	/*
+	 * Border
+	 */
 	Border border = BorderFactory.createLoweredBevelBorder();
 
 	// ALL THE DECLERATIONS!
 	Dimension dimension = new Dimension(75, 35);
-	private JPanel topLeftPanel, topRightPanel, topCenterPanel, mainPanel,
-			tblPanel;
+	private JPanel topLeftPanel, topRightPanel, topCenterPanel, mainPanel,tblPanel;
 	private JLabel lblWkEndDt, lblBU, lblMon, lblTues, lblWed, lblThurs,
 			lblFri, lblSat, lblSun, lblType, lblInstructions, lblInstructions1,
 			lblInstructions2, lblInstructions3;
 	private JLabel lblTotSun, lblTotMon, lblTotTues, lblTotWed, lblTotThurs,
-			lblTotFri, lblTotSat, lblTot, lblTot1, lblTot2, lblTot3,
-			lblTotBlank;
+			lblTotFri, lblTotSat, lblTot, lblTot1, lblTot2, lblTot3,lblTotBlank;
 	private JComboBox<String> ddSaturdays, ddType;
-	private JTextField txtSun, txtMon, txtTues, txtWed, txtThurs, txtFri,
-			txtSat;
-	private JTextField txtSun1, txtMon1, txtTues1, txtWed1, txtThurs1, txtFri1,
-			txtSat1;
-	private JTextField txtSun2, txtMon2, txtTues2, txtWed2, txtThurs2, txtFri2,
-			txtSat2;
+	private JTextField txtSun, txtMon, txtTues, txtWed, txtThurs, txtFri,txtSat;
+	private JTextField txtSun1, txtMon1, txtTues1, txtWed1, txtThurs1, txtFri1,txtSat1;
+	private JTextField txtSun2, txtMon2, txtTues2, txtWed2, txtThurs2, txtFri2,txtSat2;
 	private JButton addButton, delButton;
 	private JTable dataTable;
 	private JScrollPane scrlPane;
@@ -69,7 +72,8 @@ public class reportForm extends JFrame {
 	String[] typeList = { "", "Meals", "Hotels Incl Tax", "Mileage",
 			"Entertainment", "Airfare", "Auto Rental", "Taxi",
 			"Parking/Tolls/Tips", "Internet", "Cell Phone", "Telephone" };
-	String usr = new String(System.getProperty("user.name"));
+	
+	String user = new String(System.getProperty("user.name"));
 	String userId = new String("256054");
 	String bu, satDate;
 
@@ -80,7 +84,6 @@ public class reportForm extends JFrame {
 		startForm();
 	}
 
-	@SuppressWarnings({ "serial" })
 	private void startForm() {
 
 		/*
@@ -92,9 +95,9 @@ public class reportForm extends JFrame {
 		/*
 		 * QRY AD TO GET USERS AB#
 		 */
-		setTitle("G3 Enterprise, Inc. Report Form " + " " + usr + ": "+ userId + " Record Number: " + Integer.toString(id));
+		setTitle("G3 Enterprise, Inc. Report Form " + " " + user + ": "+ userId + " Record Number: " + Integer.toString(id));
 		setFont(new Font("Arial", Font.PLAIN, 12));
-
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		/*
 		 * PANEL FOR WEEK ENDING DATE
 		 */
@@ -407,8 +410,7 @@ public class reportForm extends JFrame {
 			}
 		};
 
-		// MAIN PANEL (Need to have this loop through days of week and create
-		// that way)
+		// MAIN PANEL (Need to have this loop through days of week and create that way)
 		mainPanel = new JPanel();
 
 		GroupLayout gl = new GroupLayout(mainPanel);
@@ -569,8 +571,7 @@ public class reportForm extends JFrame {
 				tblModel.removeRow(0);
 			}
 
-			while (rs.next()) {
-				tblModel.addRow(new Object[] { rs.getString(sqls.KEY_ROWID),
+			while (rs.next()) {tblModel.addRow(new Object[] { rs.getString(sqls.KEY_ROWID),
 						rs.getString(sqls.TYPE), rs.getString(sqls.TRAN_DATE),
 						rs.getFloat(sqls.AMOUNT), rs.getString(sqls.CREATE_DT) });
 			}
@@ -719,17 +720,13 @@ public class reportForm extends JFrame {
 							tranType = ddType.getSelectedItem().toString();
 							JLabel lbl = map.get(txt);
 
-							tranDate = lbl.getText().substring(
-									lbl.getText().indexOf("<br>") + 4,
-									lbl.getText().length());
+							tranDate = lbl.getText().substring(lbl.getText().indexOf("<br>") + 4,lbl.getText().length());
 
 							tranAmount = Double.parseDouble(txt.getText());
 							try {
-								ResultSet rs = sqls.sqlInsertNewRecord(
-										tranDate, tranType, tranAmount, x, id);
+								ResultSet rs = sqls.sqlInsertNewRecord(tranDate, tranType, tranAmount, x, id);
 								int ids = new Integer(rs.getInt(1));
-								System.out.print(ids);
-							} catch (SQLException e1) {
+								} catch (SQLException e1) {
 								e1.printStackTrace();
 							}
 						}
@@ -861,16 +858,13 @@ public class reportForm extends JFrame {
 
 			switch (x) {
 			case 0:
-				JTextField[] weekList = { txtSun, txtMon, txtTues, txtWed,
-						txtThurs, txtFri, txtSat };
+				JTextField[] weekList = { txtSun, txtMon, txtTues, txtWed,txtThurs, txtFri, txtSat };
 				return weekList;
 			case 1:
-				JTextField[] weekList1 = { txtSun1, txtMon1, txtTues1, txtWed1,
-						txtThurs1, txtFri1, txtSat1 };
+				JTextField[] weekList1 = { txtSun1, txtMon1, txtTues1, txtWed1, txtThurs1, txtFri1, txtSat1 };
 				return weekList1;
 			case 2:
-				JTextField[] weekList2 = { txtSun2, txtMon2, txtTues2, txtWed2,
-						txtThurs2, txtFri2, txtSat2 };
+				JTextField[] weekList2 = { txtSun2, txtMon2, txtTues2, txtWed2, txtThurs2, txtFri2, txtSat2 };
 				return weekList2;
 			}
 			return null;
@@ -910,8 +904,8 @@ public class reportForm extends JFrame {
 		}
 
 		@Override
-		public void mouseClicked(MouseEvent arg0) {
-			if (arg0.getSource() == dataTable) {
+		public void mouseClicked(MouseEvent e) {
+			if (e.getSource() == dataTable) {
 				int row = dataTable.getSelectedRow();
 				int pk = Integer.parseInt(dataTable.getValueAt(row, 0).toString());
 				String type = dataTable.getValueAt(row, 1).toString();

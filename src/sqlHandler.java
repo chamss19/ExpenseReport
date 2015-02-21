@@ -6,8 +6,8 @@ public class sqlHandler {
 			TYPE = "CHARGE_TYPE", TRAN_DATE = "TRAN_DATE", AMOUNT = "AMOUNT",
 			CREATE_DT = "CREATE_DT", EXPENSE_TABLE = "TBL_EXPENSE",
 			HEADER_TABLE = "TBL_REPORT_HEADER", USER = "USER",
-			RECORD_ID = "HEADER_ID", TABLE_POSITION = "POSITION",
-			SAT_DATE = "END_SAT";
+			RECORD_ID = "HEADER_ID", SUB_TYPE = "POSITION",
+			SAT_DATE = "END_SAT", COMMENTS="COMMENTS";
 
 	private StringBuilder qry = new StringBuilder();
 	private Connection c = null;
@@ -51,8 +51,6 @@ public class sqlHandler {
 
 		qry.append(BU + " TEXT NOT NULL,\n");
 
-		qry.append(SAT_DATE + " TEXT NOT NULL,\n");
-
 		qry.append(CREATE_DT + " DATETIME DEFAULT CURRENT_TIMESTAMP\n");
 
 		qry.append(")");
@@ -60,6 +58,8 @@ public class sqlHandler {
 		stmt.executeUpdate(qry.toString());
 
 		qry.delete(0, qry.length());
+		
+		
 
 		qry.append("CREATE TABLE ");
 
@@ -69,13 +69,15 @@ public class sqlHandler {
 
 		qry.append(TYPE + " TEXT NOT NULL,\n");
 
+		qry.append(SUB_TYPE + " TEXT NOT NULL,\n");
+		
 		qry.append(RECORD_ID + " INTEGER NOT NULL,\n");
 
 		qry.append(TRAN_DATE + " TEXT NOT NULL,\n");
 
+		qry.append(COMMENTS + " TEXT,\n");
+		
 		qry.append(AMOUNT + " REAL NOT NULL,\n");
-
-		qry.append(TABLE_POSITION + " INTEGER NOT NULL,\n");
 
 		qry.append(CREATE_DT + " DATETIME DEFAULT CURRENT_TIMESTAMP\n");
 
@@ -84,37 +86,62 @@ public class sqlHandler {
 		stmt.executeUpdate(qry.toString());
 
 		qry.delete(0, qry.length());
+		
+		System.out.println("TABLES CREATED");
 	}
 
-	public ResultSet sqlInsertNewHeader(String usr, String bu, String date)
-			throws SQLException {
-		sql = c.prepareStatement("INSERT INTO TBL_REPORT_HEADER (" + USER + "," + BU + ", " + SAT_DATE + ") VALUES (?,?,?);");
-		sql.setString(1, usr);
-		sql.setString(2, bu);
-		sql.setString(3, date);
-		sql.execute();
+	public ResultSet sqlInsertNewHeader(String usr, String bu){
+		try {
+			sql = c.prepareStatement("INSERT INTO TBL_REPORT_HEADER (" + USER + "," + BU + ") VALUES (?,?);");
+			sql.setString(1, usr);
+			sql.setString(2, bu);
+			sql.execute();
 
-		return stmt.executeQuery("SELECT last_insert_rowid() ");
+			return stmt.executeQuery("SELECT last_insert_rowid() ");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
-	public ResultSet sqlInsertNewRecord(String tranDate, String tranType, double tranAmount, int x, int id) throws SQLException {
-		sql = c.prepareStatement(" INSERT INTO " + EXPENSE_TABLE + " ("+ RECORD_ID + ", " + TRAN_DATE + ", " + AMOUNT + ", " + TYPE + ", " + TABLE_POSITION + ") VALUES (?,?,?,?,?)");
-		sql.setInt(1, id);
-		sql.setString(2, tranDate);
-		sql.setDouble(3, tranAmount);
-		sql.setString(4, tranType);
-		sql.setInt(5, x);
-		sql.execute();
+	public ResultSet sqlInsertNewRecord(String[] bundle)  {
+		try {
+			sql = c.prepareStatement(" INSERT INTO " + EXPENSE_TABLE + " ("+ RECORD_ID + ", " + TRAN_DATE + ", " + AMOUNT + ", " + TYPE + ", " + SUB_TYPE + ", " + COMMENTS + ") VALUES (?,?,?,?,?,?)");
+			sql.setString(1, bundle[0]);
+			sql.setString(2, bundle[1]);
+			sql.setString(3, bundle[2]);
+			sql.setString(4, bundle[3]);
+			sql.setString(5, bundle[4]);
+			sql.setString(6, bundle[5]);
+			sql.execute();
+			return stmt.executeQuery("SELECT last_insert_rowid() ");
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
-		return stmt.executeQuery("SELECT last_insert_rowid() ");
+		return null;
 	}
 
-	public ResultSet sqlSelect(String str) throws SQLException {
-		return stmt.executeQuery(str);
+	public ResultSet sqlSelect(String str)  {
+		try {
+			return stmt.executeQuery(str);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
-	public void sqlDelete(String str) throws SQLException {
-		sql = c.prepareStatement(str);
-		sql.execute();
+	public void sqlDelete(String str)  {
+		try {
+			sql = c.prepareStatement(str);
+			sql.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

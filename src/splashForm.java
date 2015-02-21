@@ -16,10 +16,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -29,12 +31,14 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.table.DefaultTableModel;
 
-public class splashForm extends JFrame {
-	private JPanel topLeftPanel, topRightPanel, topCenterPanel, mainPanel;
 
-	private JButton exitButton, newButton, loadButton;
+
+public class splashForm extends JFrame {
+	private JPanel topLeftPanel, panelNewRecord, panelBisUnit,  panelLoad, panelExit;
+
+	private JButton btnExit, btnNew, btnLoad;
 	private JTable dataTable;
-	private JPanel tblPanel;
+	private JPanel panelDataTable;
 	private JScrollPane scrlPane;
 	private JTextField txtMovieName;
 	private JLabel lblBU, lblWkEndDt, lblTitle;
@@ -45,6 +49,9 @@ public class splashForm extends JFrame {
 	sqlHandler sqls = new sqlHandler();
 	formEvents frmEvents = new formEvents();
 
+	/*
+	* All the BUs
+	*/
 	String[] buList = { "", "8501 Accounting Finance", "8505 Admin Corporate",
 			"8506 Transportation", "8507 Board", "8508 Sales", "8509 HR",
 			"8510 G3 IT", "8710 Operations Closure",
@@ -60,7 +67,7 @@ public class splashForm extends JFrame {
 	public void startForm() throws SQLException {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(myLayOut);
-		setSize(650, 500);
+		setSize(650, 515);
 
 		lblTitle = new JLabel("Expense Application", JLabel.CENTER);
 		lblTitle.setPreferredSize(new Dimension(650, 35));
@@ -68,90 +75,125 @@ public class splashForm extends JFrame {
 		add(lblTitle);
 
 		/*
-		 * PANEL FOR WEEK ENDING DATE
-		 */
-		lblWkEndDt = new JLabel("Please Choose Saturday Week Ending Date",
-				JLabel.LEFT);
-		ddSaturdays = new JComboBox<String>();
-		ddSaturdays.setPreferredSize(new Dimension(100, 25));
-		getSaturdays();
-		ddSaturdays.setSelectedIndex(0);
-		ddSaturdays.addActionListener(frmEvents);
-		topLeftPanel = new JPanel(new BorderLayout());
-		topLeftPanel.setAlignmentY(JPanel.LEFT_ALIGNMENT);
-		topLeftPanel.setPreferredSize(new Dimension(295, 40));
-		topLeftPanel.setBackground(Color.LIGHT_GRAY);
-		topLeftPanel.add(lblWkEndDt, BorderLayout.NORTH);
-		topLeftPanel.add(ddSaturdays, BorderLayout.SOUTH);
-		add(topLeftPanel);
-
-		/*
 		 * PANEL FOR BU QUESTION
 		 */
-		lblBU = new JLabel("Please Choose a BU to Charge", JLabel.LEFT);
-		ddBisUnits = new JComboBox<String>(buList);
-		ddBisUnits.setPreferredSize(new Dimension(100, 25));
-		ddBisUnits.addActionListener(frmEvents);
-		topCenterPanel = new JPanel(new BorderLayout());
-		topCenterPanel.setPreferredSize(new Dimension(295, 40));
-		topCenterPanel.setBackground(Color.LIGHT_GRAY);
-		topCenterPanel.add(lblBU, BorderLayout.NORTH);
-		topCenterPanel.add(ddBisUnits, BorderLayout.SOUTH);
-		add(topCenterPanel);
+
+		ddBisUnits = new JComboBox<String>(buList){{
+				setPreferredSize(new Dimension(100, 25));
+				addActionListener(frmEvents);
+			}		
+		};
+
+		panelBisUnit = new JPanel(new BorderLayout()){{
+				setBorder(BorderFactory.createRaisedBevelBorder());
+				setPreferredSize(new Dimension(295, 50));
+				add(new JLabel("Please Choose a BU to Charge", JLabel.LEFT), BorderLayout.NORTH);
+				add(ddBisUnits, BorderLayout.SOUTH);
+			}
+		};		
+		add(panelBisUnit);
 
 		/*
 		 * ADD NEW RECORD BUTTON
 		 */
-		newButton = new JButton("ADD A NEW RECORD");
-		newButton.setPreferredSize(new Dimension(600, 50));
-		newButton.addActionListener(frmEvents);
-		add(newButton);
+		btnNew = new JButton("ADD A NEW RECORD"){{
+				setPreferredSize(new Dimension(100, 25));
+				addActionListener(frmEvents);
+				setEnabled(false);		
+			}
+		};
+
+		/*
+		 * panel for the new button
+		 */
+		panelNewRecord = new JPanel(new BorderLayout()){{
+				setPreferredSize(new Dimension(295, 50));
+				add(btnNew, BorderLayout.SOUTH);
+			}
+		};		
+		add(panelNewRecord);
+
 
 		/*
 		 * DATA TABLE AND SCROLL PANE
 		 */
-		DefaultTableModel model = new DefaultTableModel(null, new Object[] {"ID", "USER", "BU", "SATURDAY", "CREATE_DT" }) {
+		DefaultTableModel model = new DefaultTableModel(null, new Object[] {"ID", "USER", "BU", "Entered Date" }) {
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
 		};
 
-		dataTable = new JTable(model);
-		dataTable.setColumnSelectionAllowed(false);
-		dataTable.getColumnModel().getColumn(0).setPreferredWidth(45);
-		dataTable.getColumnModel().getColumn(1).setPreferredWidth(75);
-		dataTable.getColumnModel().getColumn(2).setPreferredWidth(180);
-		dataTable.getColumnModel().getColumn(3).setPreferredWidth(125);
-		dataTable.getColumnModel().getColumn(4).setPreferredWidth(200);
-		dataTable.addMouseListener(frmEvents);
-		scrlPane = new JScrollPane(dataTable);
+		/*
+		* Create the grid
+		*/
+		dataTable = new JTable(model){{
+				setColumnSelectionAllowed(false);
+				getColumnModel().getColumn(0).setMaxWidth(0);
+				getColumnModel().getColumn(0).setMinWidth(0);
+				getColumnModel().getColumn(0).setPreferredWidth(0);
+				getColumnModel().getColumn(1).setPreferredWidth(75);
+				getColumnModel().getColumn(2).setPreferredWidth(180);
+				getColumnModel().getColumn(3).setPreferredWidth(200);	
+				addMouseListener(frmEvents);
+			}
+		};
 
 		/*
-		 * PANEL TO PUT THE STUFF ON
+		 * data table sits in this panel
 		 */
-		tblPanel = new JPanel();
-		tblPanel.setLayout(new BorderLayout());
-		tblPanel.setPreferredSize(new Dimension(600, 200));
-		tblPanel.add(scrlPane, BorderLayout.CENTER);
-		tblPanel.addMouseListener(frmEvents);
-		add(tblPanel);
+		panelDataTable = new JPanel(){{
+				setLayout(new BorderLayout());
+				setPreferredSize(new Dimension(600, 200));
+				add(new JScrollPane(dataTable), BorderLayout.CENTER);
+				addMouseListener(frmEvents);
+			}
+		};		
+		add(panelDataTable);
 
 		/*
-		 * load BUTTON
+		 * load button and panel
 		 */
-		loadButton = new JButton("LOAD RECORD");
-		loadButton.setPreferredSize(new Dimension(300, 50));
-		loadButton.addActionListener(frmEvents);
-		add(loadButton, BorderLayout.SOUTH);
+		btnLoad = new JButton("LOAD RECORD"){{
+				setPreferredSize(new Dimension(100, 35));
+				addActionListener(frmEvents);
+			}	
+		};		
+		
+
+		panelLoad = new JPanel(new BorderLayout()){{
+				setPreferredSize(new Dimension(295, 50));
+				add(btnLoad, BorderLayout.NORTH);
+			}
+		};		
+		add(panelLoad, BorderLayout.NORTH);
+	
+		
+		/*
+		 * create an empty rows between load and exit buttons
+		 */
+		add(new JPanel() {{setPreferredSize(new Dimension(295,50));}});
+		add(new JPanel() {{setPreferredSize(new Dimension(595,50)); setBorder(BorderFactory.createEtchedBorder());}});
+		add(new JPanel() {{setPreferredSize(new Dimension(295,50));}});
 
 		/*
-		 * EXIT BUTTON
+		 * Exit button panel and button
 		 */
-		exitButton = new JButton("EXIT");
-		exitButton.setPreferredSize(new Dimension(300, 50));
-		exitButton.addActionListener(frmEvents);
-		add(exitButton, BorderLayout.SOUTH);
+		btnExit = new JButton("EXIT"){{
+				setPreferredSize(new Dimension(100, 35));
+				addActionListener(frmEvents);	
+				setBackground(Color.RED);
+			}
+		};
 
+		panelExit = new JPanel(new BorderLayout()){{
+				setPreferredSize(new Dimension(295, 50));
+				add(btnExit, BorderLayout.SOUTH);
+			}
+		};		
+		add(panelExit);
+
+		
+		
 		/*
 		 * SET UP THE SQL CLASS
 		 */
@@ -160,6 +202,9 @@ public class splashForm extends JFrame {
 		setVisible(true);
 	}
 
+	/*
+	 * loop through dates and find the saturdays
+	 */
 	private void getSaturdays() {
 		Calendar cal = Calendar.getInstance();
 		Calendar end = Calendar.getInstance();
@@ -177,14 +222,12 @@ public class splashForm extends JFrame {
 	}
 
 	public void loadTable() throws SQLException {
-
 		DefaultTableModel tblModel = (DefaultTableModel) dataTable.getModel();
 		ResultSet rs = sqls.sqlSelect("SELECT * FROM " + sqls.HEADER_TABLE);
 		try {
 			while (rs.next()) {
 				tblModel.addRow(new Object[] { rs.getString(sqls.KEY_ROWID),
 						rs.getString(sqls.USER), rs.getString(sqls.BU),
-						rs.getString(sqls.SAT_DATE),
 						rs.getString(sqls.CREATE_DT) });
 			}
 		} catch (SQLException e1) {
@@ -193,51 +236,59 @@ public class splashForm extends JFrame {
 	}
 
 	private class formEvents implements ActionListener, MouseListener {
-
+		String bu, user = new String(System.getProperty("user.name"));;
+		int id, row;
+		
+		private void newButton()  {				
+				bu = new String(ddBisUnits.getSelectedItem().toString());
+				try {
+					ResultSet rs = sqls.sqlInsertNewHeader(user, bu);
+					id=rs.getInt(1);
+					new EntryForm().loadRecord(id, bu);
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(null, "Error");
+				}					
+		}
+		
+		private void loadButton() {
+			id = Integer.parseInt(dataTable.getValueAt(row, 0).toString());
+			bu = (dataTable.getValueAt(row, 2).toString());
+			new EntryForm().loadRecord(id, bu);
+		}
+		
+		private void exitButton() {
+			dispose();
+		}
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JButton btn = (JButton) e.getSource();
-			
-			if (btn==exitButton) {
-				dispose();
-			}
-			if (btn == newButton) {
-				try {
-					String usr = new String(System.getProperty("user.name"));
-					String bu = new String(ddBisUnits.getSelectedItem().toString());
-					String date = new String(ddSaturdays.getSelectedItem().toString());
-					System.out.println(bu);
-					ResultSet rs = sqls.sqlInsertNewHeader(usr, bu, date);
-					int id = rs.getInt(1);
-					reportForm rpt = new reportForm();
-					rpt.loadRecord(id, bu, date);
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+			if(e.getSource() instanceof JButton){
+				JButton btn = (JButton) e.getSource();
+				this.row= dataTable.getSelectedRow();
+				if (btn==btnNew) {
+					this.newButton();
 				}
+				
+				if (btn==btnLoad) {
+					this.loadButton();
+				}
+				
+				if (btn==btnExit) {		
+					this.exitButton();
+				}
+			}else if(e.getSource()==ddBisUnits) {
+				btnNew.setEnabled(false);
+				if (!ddBisUnits.getSelectedItem().toString().equals("")) {
+					btnNew.setEnabled(true);
+				}
+				
 			}
-			if (btn==loadButton) {
-				int row = dataTable.getSelectedRow();
-				int id = Integer.parseInt(dataTable.getValueAt(row, 0).toString());
-				String bu = (dataTable.getValueAt(row, 2).toString());
-				String date = (dataTable.getValueAt(row, 3).toString());
-				/*
-				 *  "ID", "USER", "BU", "SATURDAY","CREATE_DT"
-				 */
-				reportForm rpt = new reportForm();
-				rpt.loadRecord(id, bu, date);
-			}
-
 		}
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			// System.out.println(e.getSource().toString());
-			if (e.getSource() == dataTable) {
-
-				int row = dataTable.getSelectedRow();
-
-				System.out.print(row);
+			if (e.getSource() == dataTable) {				
+				this.row = dataTable.getSelectedRow();
 				DefaultTableModel tblModel = (DefaultTableModel) dataTable.getModel();
 
 				while (tblModel.getRowCount() > 0) {
