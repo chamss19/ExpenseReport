@@ -394,7 +394,7 @@ public class expenseForm extends JFrame
 							try 
 							{
 
-								ResultSet rs = sqls.sqlInsertNewRecord(tranDate, tranType,  tranAmount, x, id);
+								ResultSet rs = sqls.sqlInsertNewRecord(new String[] {});
 								int ids = new Integer(rs.getInt(1));
 								System.out.print(ids);
 							} 
