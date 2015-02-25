@@ -6,15 +6,11 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -27,22 +23,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import javax.swing.table.DefaultTableModel;
 
 
 
 public class splashForm extends JFrame {
-	private JPanel topLeftPanel, panelNewRecord, panelBisUnit,  panelLoad, panelExit;
+	private JPanel  panelNewRecord, panelBisUnit,  panelLoad, panelExit;
 
 	private JButton btnExit, btnNew, btnLoad;
 	private JTable dataTable;
 	private JPanel panelDataTable;
-	private JScrollPane scrlPane;
-	private JTextField txtMovieName;
-	private JLabel lblBU, lblWkEndDt, lblTitle;
-	private JTextArea txtMovieNotes;
+	private JLabel lblTitle;
+
 	final FlowLayout myLayOut = new FlowLayout(FlowLayout.CENTER);
 	private JComboBox<String> ddBisUnits, ddSaturdays;
 
@@ -200,25 +192,6 @@ public class splashForm extends JFrame {
 		loadTable();
 
 		setVisible(true);
-	}
-
-	/*
-	 * loop through dates and find the saturdays
-	 */
-	private void getSaturdays() {
-		Calendar cal = Calendar.getInstance();
-		Calendar end = Calendar.getInstance();
-		Calendar start = Calendar.getInstance();
-		SimpleDateFormat f = new SimpleDateFormat("MM/dd/yyyy");
-
-		cal.add(Calendar.YEAR, -1);
-		start.setTime(cal.getTime());
-
-		for (Date date = end.getTime(); !end.before(start); end.add(Calendar.DATE, -1), date = end.getTime()) {
-			if (date.getDay() == 6) {
-				ddSaturdays.addItem(f.format(date));
-			}
-		}
 	}
 
 	public void loadTable() throws SQLException {

@@ -1,5 +1,7 @@
 import java.sql.*;
 
+import javax.swing.JOptionPane;
+
 public class sqlHandler {
 
 	public static final String KEY_ROWID = "row_id", BU = "BUSINESS_UNIT",
@@ -18,6 +20,8 @@ public class sqlHandler {
 		this.getConnection();
 		try {
 			stmt = c.createStatement();
+			createAllTables();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -28,7 +32,7 @@ public class sqlHandler {
 			if (c == null) {
 				Class.forName("org.sqlite.JDBC");
 				c = DriverManager.getConnection("jdbc:sqlite:expenses.db");
-				System.out.println("Opened database successfully");
+				
 			}
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -36,12 +40,16 @@ public class sqlHandler {
 		}
 	}
 
-	public void createAllTables() throws SQLException {
-
+	public void deleteTables() throws SQLException{
 		stmt.executeUpdate("DROP TABLE IF EXISTS " + EXPENSE_TABLE);
 		stmt.executeUpdate("DROP TABLE IF EXISTS " + HEADER_TABLE);
 
-		qry.append("CREATE TABLE  \n");
+	}
+	
+	public void createAllTables() throws SQLException {
+
+
+		qry.append("CREATE TABLE IF NOT EXISTS \n");
 
 		qry.append(HEADER_TABLE + "\n(\n");
 
@@ -61,7 +69,7 @@ public class sqlHandler {
 		
 		
 
-		qry.append("CREATE TABLE ");
+		qry.append("CREATE TABLE IF NOT EXISTS ");
 
 		qry.append(EXPENSE_TABLE + "\n(\n");
 
@@ -87,7 +95,7 @@ public class sqlHandler {
 
 		qry.delete(0, qry.length());
 		
-		System.out.println("TABLES CREATED");
+//		System.out.println("TABLES CREATED");
 	}
 
 	public ResultSet sqlInsertNewHeader(String usr, String bu){
@@ -118,7 +126,7 @@ public class sqlHandler {
 			sql.execute();
 			return stmt.executeQuery("SELECT last_insert_rowid() ");
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(null, "Broke in insert.");
 			e1.printStackTrace();
 		}
 

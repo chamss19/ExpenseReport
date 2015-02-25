@@ -724,7 +724,7 @@ public class reportForm extends JFrame {
 
 							tranAmount = Double.parseDouble(txt.getText());
 							try {
-								ResultSet rs = sqls.sqlInsertNewRecord(tranDate, tranType, tranAmount, x, id);
+								ResultSet rs = sqls.sqlInsertNewRecord(new String[] {"PUT 6 THINGS HERE"});
 								int ids = new Integer(rs.getInt(1));
 								} catch (SQLException e1) {
 								e1.printStackTrace();
