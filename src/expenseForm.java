@@ -59,15 +59,7 @@ public class expenseForm extends JFrame
 	
 	public void newRecord()
 	{
-// 		try 
-//		{
-//
-//			startForm();
-//		} 
-//		catch (SQLException e) 
-//		{
-//			e.printStackTrace();
-//		}
+
 	}
 	
 	
